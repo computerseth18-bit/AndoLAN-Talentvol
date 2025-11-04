@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: andolan-talentvol-demo
+    env: node
+    region: frankfurt
+    plan: free
+    branch: main
+    buildCommand: 'npm install'
+    startCommand: 'node server.js'
+    envVars:
+      - key: PORT
+        value: '10000'
+      - key: BASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: OIDC_MS_ISSUER
+        sync: false
+      - key: OIDC_MS_CLIENT_ID
+        sync: false
+      - key: OIDC_MS_CLIENT_SECRET
+        sync: false
+      - key: OIDC_MS_SCOPE
+        value: 'openid profile email offline_access'
+      - key: OIDC_GOOGLE_ISSUER
+        value: 'https://accounts.google.com'
+      - key: OIDC_GOOGLE_CLIENT_ID
+        sync: false
+      - key: OIDC_GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: OIDC_GOOGLE_SCOPE
+        value: 'openid profile email'

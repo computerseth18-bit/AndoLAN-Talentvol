@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basisschool Talentvol — Speciaal Onderwijs AnnoNU — AndoLAN</title>
+  <style>
+    :root {
+      --brand: #e67e22;      /* Talentvol oranje */
+      --brand-dark: #c15f0a; /* donker oranje */
+      --accent: #6b2a1b;     /* warm bruin */
+      --bg: #fff8f1;         /* zachte achtergrondtoon */
+      --card: #ffffff;
+      --text: #2d2a28;
+      --muted: #7a6e68;
+      --success: #16a34a;
+      --error: #dc2626;
+      --radius: 14px;
+      --shadow: 0 8px 24px rgba(0,0,0,.08);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(180deg, var(--brand), var(--brand-dark));
+      color: #fff;
+      padding: 24px 16px;
+    }
+    .brandbar {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brandbar img.logo {
+      width: 52px; height: 52px; border-radius: 10px; background: #fff; object-fit: contain; padding: 6px;
+    }
+    .brandbar .title { font-weight: 800; font-size: 22px; letter-spacing: .2px; }
+    .brandbar .subtitle { opacity:.95; font-size: 14px; }
+
+    nav {
+      background: #fff;
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      max-width: 1100px;
+      margin: -18px auto 18px;
+      padding: 8px 12px;
+      display: none;
+    }
+    .nav-inner { display: flex; align-items: center; gap: 12px; justify-content: space-between; }
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tab {
+      padding: 10px 14px; border-radius: 12px; border: 1px solid #e5e7eb; background: #fff;
+      text-decoration: none; color: var(--text); font-weight: 600; font-size: 14px;
+    }
+    .tab.active, .tab:hover { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(230,126,34,.18); }
+
+    .userbar { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: #e5e7eb; display: grid; place-items: center; font-weight: 700; }
+    .btn { border: none; padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; }
+    .btn-primary { background: var(--brand); color: #fff; }
+    .btn-primary:hover { background: var(--brand-dark); }
+    .btn-outline { background: #fff; border:1px solid #e5e7eb; }
+
+    .container { max-width: 1100px; width: 100%; margin: 0 auto; padding: 0 16px 32px; flex: 1; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; min-height: 120px; }
+    .card h2 { margin: 0 0 10px; font-size: 18px; }
+    .muted { color: var(--muted); }
+
+    .login-wrap { display: grid; place-items: center; padding: 32px 16px; }
+    .login { width: 100%; max-width: 480px; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; }
+    .login h2 { margin: 0 0 8px; }
+    .field { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+    .field input { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; font-size: 15px; }
+    .field input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(230,126,34,.18); }
+    .help { font-size: 12px; color: var(--muted); }
+    .alert { font-size: 14px; padding: 10px 12px; border-radius: 10px; margin: 10px 0; }
+    .alert.error { background: #fee2e2; color: var(--error); border: 1px solid #fecaca; }
+    .alert.success { background: #dcfce7; color: var(--success); border: 1px solid #bbf7d0; }
+
+    footer { text-align: center; padding: 20px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brandbar">
+      <img class="logo" src="./assets/logo.png" alt="Basisschool Talentvol logo" />
+      <div>
+        <div class="title">Basisschool Talentvol</div>
+        <div class="subtitle">Speciaal Onderwijs AnnoNU — AndoLAN</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Inloggen -->
+  <section class="login-wrap" id="login-section">
+    <div class="login">
+      <h2>Inloggen</h2>
+      <p class="muted">Kies je aanmeldmethode. Met Microsoft/Google ga je via de school-IdP.</p>
+      <div style="display:flex; gap:8px; margin: 8px 0 14px; flex-wrap: wrap;">
+        <button class="btn btn-primary" type="button" id="btn-ms">Login met Microsoft</button>
+        <button class="btn btn-outline" type="button" id="btn-google">Login met Google</button>
+      </div>
+
+      <details>
+        <summary class="muted" style="cursor:pointer">Of gebruik tijdelijk lokaal inloggen</summary>
+        <div id="login-msg" class="alert" style="display:none"></div>
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label for="username">Gebruikersnaam</label>
+            <input id="username" name="username" autocomplete="username" required />
+            <div class="help">Bijv. voornaam.achternaam</div>
+          </div>
+          <div class="field">
+            <label for="password">Wachtwoord</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required minlength="6" />
+            <div class="help">Minimaal 6 tekens</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; justify-content: space-between;">
+            <button class="btn btn-primary" type="submit">Inloggen</button>
+            <label style="display:flex; align-items:center; gap:6px; font-size:14px;">
+              <input id="remember" type="checkbox" /> Ingelogd blijven
+            </label>
+          </div>
+        </form>
+      </details>
+    </div>
+  </section>
+
+  <!-- Navigatie (zichtbaar na login) -->
+  <nav id="nav" aria-label="Hoofd">
+    <div class="nav-inner">
+      <div class="tabs" role="tablist">
+        <a class="tab active" href="#home" data-tab>Home</a>
+        <a class="tab" href="#portalen" data-tab>Portalen</a>
+        <a class="tab" href="#links" data-tab>Handige Links</a>
+        <a class="tab" href="#nieuws" data-tab>Nieuws</a>
+        <a class="tab" href="#profiel" data-tab>Profiel</a>
+      </div>
+      <div class="userbar">
+        <div class="avatar" id="avatar">A</div>
+        <span id="user-name" class="muted"></span>
+        <button id="logout" class="btn btn-outline" type="button">Uitloggen</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" id="app" style="display:none;">
+    <div id="home" class="card view">
+      <h2>Welkom terug!</h2>
+      <p class="muted">Kies een onderdeel in het menu om te beginnen.</p>
+    </div>
+
+    <div id="portalen" class="card view" hidden>
+      <h2>School Portalen</h2>
+      <ul>
+        <li><a href="#">Magister</a></li>
+        <li><a href="#">Itslearning</a></li>
+        <li><a href="#">School E-mail</a></li>
+      </ul>
+    </div>
+
+    <div id="links" class="card view" hidden>
+      <h2>Handige Links</h2>
+      <ul>
+        <li><a href="#">Rooster</a></li>
+        <li><a href="#">Vakantierooster</a></li>
+        <li><a href="#">Schoolgids</a></li>
+      </ul>
+    </div>
+
+    <div id="nieuws" class="card view" hidden>
+      <h2>Nieuws & Updates</h2>
+      <p>Hier komt het laatste nieuws van school te staan.</p>
+    </div>
+
+    <div id="profiel" class="card view" hidden>
+      <h2>Profiel</h2>
+      <p><strong>Naam:</strong> <span id="p-name">-</span></p>
+      <p><strong>E-mail:</strong> <span id="p-email">-</span></p>
+      <p><strong>Rol:</strong> <span id="p-role">-</span></p>
+    </div>
+  </main>
+
+  <footer>© <span id="year"></span> Basisschool Talentvol — Speciaal Onderwijs AnnoNU — AndoLAN</footer>
+
+  <script>
+    const qs = (sel, el=document) => el.querySelector(sel);
+    const qsa = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+
+    qs('#year').textContent = new Date().getFullYear();
+
+    const loginSection = qs('#login-section');
+    const loginForm = qs('#login-form');
+    const loginMsg = qs('#login-msg');
+    const rememberEl = qs('#remember');
+
+    const nav = qs('#nav');
+    const app = qs('#app');
+    const tabs = qsa('[data-tab]');
+    const views = qsa('.view');
+
+    const avatar = qs('#avatar');
+    const userName = qs('#user-name');
+    const btnLogout = qs('#logout');
+
+    const pName = qs('#p-name');
+    const pEmail = qs('#p-email');
+    const pRole = qs('#p-role');
+
+    function showAlert(type, text){
+      loginMsg.className = 'alert ' + (type === 'error' ? 'error' : 'success');
+      loginMsg.textContent = text; loginMsg.style.display = 'block';
+    }
+
+    tabs.forEach(t => t.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = t.getAttribute('href').slice(1);
+      tabs.forEach(x => x.classList.toggle('active', x === t));
+      views.forEach(v => v.hidden = v.id !== id);
+    }));
+
+    function setAuthedUI(user){
+      loginSection.style.display = 'none';
+      nav.style.display = 'block';
+      app.style.display = 'block';
+      userName.textContent = user.name || '';
+      avatar.textContent = (user.name || 'A').slice(0,1).toUpperCase();
+      pName.textContent = user.name || '-';
+      pEmail.textContent = user.email || '-';
+      pRole.textContent = user.role || '-';
+    }
+    function setLoggedOutUI(){
+      nav.style.display = 'none';
+      app.style.display = 'none';
+      loginSection.style.display = 'grid';
+      if (loginForm) loginForm.reset();
+      if (loginMsg) loginMsg.style.display = 'none';
+    }
+
+    async function bootstrap(){
+      try {
+        const r = await fetch('/api/me', { credentials: 'include' });
+        if(r.ok){ const data = await r.json(); setAuthedUI(data.user); return; }
+      } catch {}
+      setLoggedOutUI();
+    }
+
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        loginMsg.style.display = 'none';
+
+        const username = qs('#username').value.trim();
+        const password = qs('#password').value;
+
+        if(!username || !password){
+          showAlert('error', 'Vul je gebruikersnaam en wachtwoord in.');
+          return;
+        }
+        if(password.length < 6){
+          showAlert('error', 'Wachtwoord moet minimaal 6 tekens zijn.');
+          return;
+        }
+
+        try {
+          const r = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ username, password, remember: rememberEl?.checked })
+          });
+          if(!r.ok){
+            const msg = (await r.json().catch(()=>({message:'Onbekende fout'}))).message || 'Login mislukt';
+            showAlert('error', msg);
+            return;
+          }
+          const data = await r.json();
+          showAlert('success', 'Je bent ingelogd.');
+          setAuthedUI(data.user);
+        } catch(err){
+          showAlert('error', 'Kan de server niet bereiken.');
+        }
+      });
+    }
+
+    btnLogout.addEventListener('click', async () => {
+      try {
+        await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+      } catch {}
+      setLoggedOutUI();
+    });
+
+    // OIDC buttons
+    qs('#btn-ms').addEventListener('click', ()=> { window.location.href = '/auth/microsoft'; });
+    qs('#btn-google').addEventListener('click', ()=> { window.location.href = '/auth/google'; });
+
+    bootstrap();
+  </script>
+</body>
+</html>
